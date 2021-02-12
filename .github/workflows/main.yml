@@ -28,9 +28,16 @@ jobs:
         run: |
           make lint
 
-      - name: test
-        run: |
-          make test
+      - name: Test & publish code coverage
+        # Publish code coverage on Code Climate
+        # https://github.com/paambaati/codeclimate-action
+        uses: paambaati/codeclimate-action@v2.7.4
+        # Add Code Climate secret key
+        env:
+          STCRD_CODE_CLIMATE: ${{ secrets.STCRD_CODE_CLIMATE }}
+        with:
+          coverageCommand: make test-coverage
+          debug: true
       # Runs a set of commands using the runners shell
       # - name: Run a multi-line script
       #  run: |
