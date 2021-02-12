@@ -28,7 +28,7 @@ jobs:
         run: |
           make lint
 
-      - name: eslint
+      - name: test
         run: |
           make test
       # Runs a set of commands using the runners shell
