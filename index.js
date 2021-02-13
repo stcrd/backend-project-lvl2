@@ -9,11 +9,7 @@ const genDiff = (filepath1, filepath2) => {
   const json2 = JSON.parse(rawJson2);
 
   const getLine = (status, key) => {
-    const prefixes = {
-      noChange: '    ',
-      deleted: '  - ',
-      added: '  + ',
-    };
+    const prefixes = { noChange: '    ', deleted: '  - ', added: '  + ' };
     const value = status === 'added' ? json2[key] : json1[key];
     return `${prefixes[status]}${key}: ${value}`;
   };
