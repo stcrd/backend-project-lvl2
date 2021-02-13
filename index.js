@@ -2,21 +2,22 @@ import _ from 'lodash';
 import parse from './src/parsers.js';
 
 const genDiff = (filepath1, filepath2) => {
-  const { parsedData1, parseData2 } = parse(filepath1, filepath2);
+  const parsedData1 = parse(filepath1);
+  const parsedData2 = parse(filepath2);
 
   const getLine = (status, key) => {
     const prefixes = { noChange: '    ', deleted: '  - ', added: '  + ' };
-    const value = status === 'added' ? parseData2[key] : parsedData1[key];
+    const value = status === 'added' ? parsedData2[key] : parsedData1[key];
     return `${prefixes[status]}${key}: ${value}`;
   };
 
-  const allKeys = [...Object.keys(parsedData1), ...Object.keys(parseData2)];
+  const allKeys = [...Object.keys(parsedData1), ...Object.keys(parsedData2)];
   const sortedUniqKeys = _.uniq(allKeys.sort());
 
   const entries = sortedUniqKeys
     .reduce((acc, key) => {
-      if (key in parsedData1 && key in parseData2) {
-        const newEntry = parsedData1[key] === parseData2[key]
+      if (key in parsedData1 && key in parsedData2) {
+        const newEntry = parsedData1[key] === parsedData2[key]
           ? [getLine('noChange', key)]
           : [getLine('deleted', key), getLine('added', key)];
         return [...acc, ...newEntry];
