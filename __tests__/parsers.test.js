@@ -18,3 +18,14 @@ test('non-empty json', () => {
   expect(parse(getFixturePath('not-empty1.json')))
     .toEqual(expected);
 });
+
+test('non-empty yaml', () => {
+  const expected = {
+    host: 'hexlet.io',
+    timeout: 50,
+    proxy: '123.234.53.22',
+    follow: false,
+  };
+  expect(parse(getFixturePath('not-empty1.yaml')))
+    .toEqual(expected);
+});
