@@ -12,7 +12,7 @@ $ npm install -g https://github.com/stcrd/backend-project-lvl2.git
 
 ## Run
 ```
-gendiff
+gendiff filepath1 filepath2
 ```
 
 ## Sample run
