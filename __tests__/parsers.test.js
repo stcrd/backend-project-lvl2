@@ -26,6 +26,6 @@ test('non-empty yaml', () => {
     proxy: '123.234.53.22',
     follow: false,
   };
-  expect(parse(getFixturePath('not-empty1.yaml')))
+  expect(parse(getFixturePath('not-empty1.yml')))
     .toEqual(expected);
 });

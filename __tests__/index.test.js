@@ -34,6 +34,6 @@ test('both empty', () => {
 
 test('non-empty json, non-empty yaml', () => {
   const expected = '{\n  + follow: false\n    host: hexlet.io\n  + proxy: 123.234.53.22\n  - timeout: 20\n  + timeout: 50\n  - verbose: true\n}';
-  expect(genDiff(getFixturePath('not-empty2.json'), getFixturePath('not-empty1.yaml')))
+  expect(genDiff(getFixturePath('not-empty2.json'), getFixturePath('not-empty1.yml')))
     .toEqual(expected);
 });
