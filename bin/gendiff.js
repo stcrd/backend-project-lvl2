@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import commander from 'commander';
 import genDiff from '../index.js';
+import formater from '../src/stylish.js';
 
 const { program } = commander;
 
@@ -10,7 +11,7 @@ program
   .option('-f, --format [type]', 'output format')
   .arguments('<filepath1> <filepath2>')
   .action((filepath1, filepath2) => {
-    const result = genDiff(filepath1, filepath2);
+    const result = formater(genDiff(filepath1, filepath2));
     console.log(result);
     return result;
   });
