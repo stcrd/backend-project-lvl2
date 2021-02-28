@@ -2,38 +2,82 @@ import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { test, expect } from '@jest/globals';
 import genDiff from '../index.js';
+import formater from '../src/stylish.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 
-test('two non-empty jsons', () => {
-  const expected = '{\n  - follow: false\n    host: hexlet.io\n  - proxy: 123.234.53.22\n  - timeout: 50\n  + timeout: 20\n  + verbose: true\n}';
-  expect(genDiff(getFixturePath('not-empty1.json'), getFixturePath('not-empty2.json')))
+test('two flat non-empty jsons', () => {
+  const expected = `{
+  - follow: false
+    host: hexlet.io
+  - proxy: 123.234.53.22
+  - timeout: 50
+  + timeout: 20
+  + verbose: true
+}`;
+  expect(formater(genDiff(getFixturePath('not-empty1.json'), getFixturePath('not-empty2.json'))))
     .toEqual(expected);
 });
 
-test('empty source, non-empty target', () => {
-  const expected = '{\n  + host: hexlet.io\n  + timeout: 20\n  + verbose: true\n}';
-  expect(genDiff(getFixturePath('empty.json'), getFixturePath('not-empty2.json')))
+test('source non-empty json, target empty json', () => {
+  const expected = `{
+  - follow: false
+  - host: hexlet.io
+  - proxy: 123.234.53.22
+  - timeout: 50
+}`;
+  expect(formater(genDiff(getFixturePath('not-empty1.json'), getFixturePath('empty.json'))))
     .toEqual(expected);
 });
 
-test('non-empty source, empty target', () => {
-  const expected = '{\n  - host: hexlet.io\n  - timeout: 20\n  - verbose: true\n}';
-  expect(genDiff(getFixturePath('not-empty2.json'), getFixturePath('empty.json')))
-    .toEqual(expected);
-});
-
-test('both empty', () => {
-  const expected = '{\n\n}';
-  expect(genDiff(getFixturePath('empty.json'), getFixturePath('empty.json')))
-    .toEqual(expected);
-});
-
-test('non-empty json, non-empty yaml', () => {
-  const expected = '{\n  + follow: false\n    host: hexlet.io\n  + proxy: 123.234.53.22\n  - timeout: 20\n  + timeout: 50\n  - verbose: true\n}';
-  expect(genDiff(getFixturePath('not-empty2.json'), getFixturePath('not-empty1.yml')))
+test('stylish format', () => {
+  const expected = `{
+    common: {
+      + follow: false
+        setting1: Value 1
+      - setting2: 200
+      - setting3: true
+      + setting3: null
+      + setting4: blah blah
+      + setting5: {
+            key5: value5
+        }
+        setting6: {
+            doge: {
+              - wow: 
+              + wow: so much
+            }
+            key: value
+          + ops: vops
+        }
+    }
+    group1: {
+      - baz: bas
+      + baz: bars
+        foo: bar
+      - nest: {
+            key: value
+        }
+      + nest: str
+    }
+  - group2: {
+        abc: 12345
+        deep: {
+            id: 45
+        }
+    }
+  + group3: {
+        deep: {
+            id: {
+                number: 45
+            }
+        }
+        fee: 100500
+    }
+}`;
+  expect(formater(genDiff(getFixturePath('nested1.json'), getFixturePath('nested2.json'))))
     .toEqual(expected);
 });
