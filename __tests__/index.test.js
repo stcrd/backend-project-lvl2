@@ -2,7 +2,7 @@ import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { test, expect } from '@jest/globals';
 import genDiff from '../src/generateDifference.js';
-import formater from '../src/stylish.js';
+import formatSelector from '../src/formatters/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,7 +18,8 @@ test('two flat non-empty jsons', () => {
   + timeout: 20
   + verbose: true
 }`;
-  expect(formater(genDiff(getFixturePath('not-empty1.json'), getFixturePath('not-empty2.json'))))
+  const rawDiff = genDiff(getFixturePath('not-empty1.json'), getFixturePath('not-empty2.json'));
+  expect(formatSelector('defaultFormatter')(rawDiff))
     .toEqual(expected);
 });
 
@@ -29,7 +30,8 @@ test('source non-empty json, target empty json', () => {
   - proxy: 123.234.53.22
   - timeout: 50
 }`;
-  expect(formater(genDiff(getFixturePath('not-empty1.json'), getFixturePath('empty.json'))))
+  const rawDiff = genDiff(getFixturePath('not-empty1.json'), getFixturePath('empty.json'));
+  expect(formatSelector('defaultFormatter')(rawDiff))
     .toEqual(expected);
 });
 
@@ -78,6 +80,24 @@ test('stylish format', () => {
         fee: 100500
     }
 }`;
-  expect(formater(genDiff(getFixturePath('nested1.json'), getFixturePath('nested2.json'))))
+  const rawDiff = genDiff(getFixturePath('nested1.json'), getFixturePath('nested2.json'));
+  expect(formatSelector('stylishFormatter')(rawDiff))
+    .toEqual(expected);
+});
+
+test('plain format', () => {
+  const expected = `Property 'common.follow' was added with value: false
+Property 'common.setting2' was removed
+Property 'common.setting3' was updated. From true to null
+Property 'common.setting4' was added with value: 'blah blah'
+Property 'common.setting5' was added with value: [complex value]
+Property 'common.setting6.doge.wow' was updated. From '' to 'so much'
+Property 'common.setting6.ops' was added with value: 'vops'
+Property 'group1.baz' was updated. From 'bas' to 'bars'
+Property 'group1.nest' was updated. From [complex value] to 'str'
+Property 'group2' was removed
+Property 'group3' was added with value: [complex value]`;
+  const rawDiff = genDiff(getFixturePath('nested1.json'), getFixturePath('nested2.json'));
+  expect(formatSelector('plainFormatter')(rawDiff))
     .toEqual(expected);
 });
