@@ -1,18 +1,16 @@
 import _ from 'lodash';
 
-const stylishFormatter = (diff, depth = 0) => {
+const stylish = (diff, depth = 0) => {
   const margin = '    '.repeat(depth);
+  if (!(diff instanceof Object)) return diff;
   const mapped = diff.reduce((acc, el) => {
     const [[key, value]] = Object.entries(el);
     const prefix = { deleted: '  - ', added: '  + ' }[el.status] || '    ';
-    if (!(value instanceof Object)) {
-      return [...acc, `${margin}${prefix}${key}: ${value}`];
-    }
-    const newValue = Array.isArray(value)
+    const newValue = (Array.isArray(value) || !(value instanceof Object))
       ? value
       : _.flatMap(value, (innerValue, innerKey) => ({ [innerKey]: innerValue }));
-    return [...acc, `${margin}${prefix}${key}: ${stylishFormatter(newValue, depth + 1)}`];
+    return [...acc, `${margin}${prefix}${key}: ${stylish(newValue, depth + 1)}`];
   }, []);
   return `{\n${mapped.join('\n')}\n${margin}}`;
 };
-export default stylishFormatter;
+export default stylish;
