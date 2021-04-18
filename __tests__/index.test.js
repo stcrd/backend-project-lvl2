@@ -81,7 +81,7 @@ test('stylish format', () => {
     }
 }`;
   const rawDiff = genDiff(getFixturePath('nested1.json'), getFixturePath('nested2.json'));
-  expect(formatSelector('stylishFormatter')(rawDiff))
+  expect(formatSelector('stylish')(rawDiff))
     .toEqual(expected);
 });
 
@@ -98,6 +98,6 @@ Property 'group1.nest' was updated. From [complex value] to 'str'
 Property 'group2' was removed
 Property 'group3' was added with value: [complex value]`;
   const rawDiff = genDiff(getFixturePath('nested1.json'), getFixturePath('nested2.json'));
-  expect(formatSelector('plainFormatter')(rawDiff))
+  expect(formatSelector('plain')(rawDiff))
     .toEqual(expected);
 });
