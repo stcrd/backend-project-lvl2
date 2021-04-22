@@ -1,14 +1,14 @@
 import _ from 'lodash';
 
-const stylish = (diff) => {
-  const getPrefix = (el) => ({ deleted: '  - ', added: '  + ' }[el.status] ?? '    ');
-  const getProperValue = (value) => {
-    if (!(value instanceof Object) || Array.isArray(value)) {
-      return value;
-    }
-    return _.map(value, (innerValue, innerKey) => ({ [innerKey]: innerValue }));
-  };
+const getPrefix = (el) => ({ deleted: '  - ', added: '  + ' }[el.status] ?? '    ');
+const getProperValue = (value) => {
+  if (!(value instanceof Object) || Array.isArray(value)) {
+    return value;
+  }
+  return _.map(value, (innerValue, innerKey) => ({ [innerKey]: innerValue }));
+};
 
+const stylish = (diff) => {
   const iter = (entries, depth = 0) => {
     if (!Array.isArray(entries)) return `${entries}`;
     const margin = '    '.repeat(depth);

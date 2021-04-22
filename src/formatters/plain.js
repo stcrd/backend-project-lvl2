@@ -1,39 +1,49 @@
 import _ from 'lodash';
 
-const plainFormatter = (diff, ancestry = '') => {
-  const mapped = diff.reduce((acc, el) => {
-    const [key] = Object.keys(el);
-    const value = typeof el[key] === 'string' ? `'${el[key]}'` : el[key];
-    const newAncestry = ancestry === '' ? `${key}` : `${ancestry}.${key}`;
-    const lastEntry = _.last(acc) || '';
-    const [[lastKey, lastValue]] = typeof lastEntry !== 'string' ? Object.entries(lastEntry) : [['', '']];
-    const properAcc = typeof lastEntry !== 'string' ? _.slice(acc, 0, acc.length - 1) : acc;
+const plainFormatter = (diff) => {
+  const getRemovedMsg = (property) => (property ? `Property '${property}' was removed` : '');
+  const getAddedMsg = (property, value) => `Property '${property}' was added with value: ${value}`;
+  const getUpdatedMsg = (property, oldValue, newValue) => (
+    `Property '${property}' was updated. From ${oldValue} to ${newValue}`
+  );
+  const complexWrapper = (value) => (_.isObject(value) ? '[complex value]' : value);
 
-    if (Array.isArray(value)) {
-      const modifiedAcc = typeof lastEntry === 'string'
-        ? properAcc
-        : [...properAcc, `Property '${lastKey}' was removed`];
-      return [...modifiedAcc, plainFormatter(value, newAncestry)];
-    }
-    if (el.status === 'deleted') {
-      const modifiedAcc = typeof lastEntry === 'string'
-        ? properAcc
-        : [...properAcc, `Property '${lastKey}' was removed`];
-      return [...modifiedAcc, { [newAncestry]: value }];
-    }
-    if (el.status === 'added') {
-      const newValue = value instanceof Object ? '[complex value]' : value;
-      if (typeof lastEntry === 'string') {
-        return [...properAcc, `Property '${newAncestry}' was added with value: ${newValue}`];
+  const iter = (entries, ancestry = '') => {
+    const mapped = entries.reduce((acc, el) => {
+      const [key] = Object.keys(el);
+      const value = typeof el[key] === 'string' ? `'${el[key]}'` : el[key];
+      const newAncestry = ancestry === '' ? `${key}` : `${ancestry}.${key}`;
+      const [lastKey, lastValue] = _.head(acc);
+      const iAcc = _.tail(acc);
+
+      if (Array.isArray(value)) {
+        return [[], ...iAcc, getRemovedMsg(lastKey), iter(value, newAncestry)];
       }
-      if (lastKey !== newAncestry) {
-        return [...properAcc, `Property '${lastKey}' was removed`, `Property '${newAncestry}' was added with value: ${newValue}`];
+      if (el.status === 'deleted') {
+        return [[newAncestry, value], ...iAcc, getRemovedMsg(lastKey)];
       }
-      const properLastValue = lastValue instanceof Object ? '[complex value]' : lastValue;
-      return [...properAcc, `Property '${newAncestry}' was updated. From ${properLastValue} to ${newValue}`];
-    }
-    return acc;
-  }, []);
-  return mapped.join('\n');
+      if (el.status === 'added') {
+        if (!lastKey) {
+          return [[], ...iAcc, getAddedMsg(newAncestry, complexWrapper(value))];
+        }
+        if (lastKey !== newAncestry) {
+          return [
+            [],
+            ...iAcc,
+            getRemovedMsg(lastKey),
+            getAddedMsg(newAncestry, complexWrapper(value)),
+          ];
+        }
+        return [
+          [],
+          ...iAcc,
+          getUpdatedMsg(newAncestry, complexWrapper(lastValue), complexWrapper(value)),
+        ];
+      }
+      return acc;
+    }, [[]]);
+    return _.compact(mapped).flat().join('\n');
+  };
+  return iter(diff);
 };
 export default plainFormatter;
