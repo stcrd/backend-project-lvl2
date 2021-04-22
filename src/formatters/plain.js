@@ -3,9 +3,7 @@ import _ from 'lodash';
 const plainFormatter = (diff) => {
   const getRemovedMsg = (property) => (property ? `Property '${property}' was removed` : '');
   const getAddedMsg = (property, value) => `Property '${property}' was added with value: ${value}`;
-  const getUpdatedMsg = (property, oldValue, newValue) => (
-    `Property '${property}' was updated. From ${oldValue} to ${newValue}`
-  );
+  const getUpdatedMsg = (property, oldValue, newValue) => `Property '${property}' was updated. From ${oldValue} to ${newValue}`;
   const complexWrapper = (value) => (_.isObject(value) ? '[complex value]' : value);
 
   const iter = (entries, ancestry = '') => {
@@ -27,16 +25,11 @@ const plainFormatter = (diff) => {
           return [[], ...iAcc, getAddedMsg(newAncestry, complexWrapper(value))];
         }
         if (lastKey !== newAncestry) {
-          return [
-            [],
-            ...iAcc,
-            getRemovedMsg(lastKey),
+          return [[], ...iAcc, getRemovedMsg(lastKey),
             getAddedMsg(newAncestry, complexWrapper(value)),
           ];
         }
-        return [
-          [],
-          ...iAcc,
+        return [[], ...iAcc,
           getUpdatedMsg(newAncestry, complexWrapper(lastValue), complexWrapper(value)),
         ];
       }
