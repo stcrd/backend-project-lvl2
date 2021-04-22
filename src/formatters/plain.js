@@ -1,11 +1,11 @@
 import _ from 'lodash';
 
-const plainFormatter = (diff) => {
-  const getRemovedMsg = (property) => (property ? `Property '${property}' was removed` : '');
-  const getAddedMsg = (property, value) => `Property '${property}' was added with value: ${value}`;
-  const getUpdatedMsg = (property, oldValue, newValue) => `Property '${property}' was updated. From ${oldValue} to ${newValue}`;
-  const complexWrapper = (value) => (_.isObject(value) ? '[complex value]' : value);
+const getRemovedMsg = (property) => (property ? `Property '${property}' was removed` : '');
+const getAddedMsg = (property, value) => `Property '${property}' was added with value: ${value}`;
+const getUpdatedMsg = (property, oldValue, newValue) => `Property '${property}' was updated. From ${oldValue} to ${newValue}`;
+const complexWrapper = (value) => (_.isObject(value) ? '[complex value]' : value);
 
+const plainFormatter = (diff) => {
   const iter = (entries, ancestry = '') => {
     const mapped = entries.reduce((acc, el) => {
       const [key] = Object.keys(el);
