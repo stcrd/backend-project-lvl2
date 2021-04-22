@@ -3,13 +3,10 @@ import _ from 'lodash';
 const stylish = (diff) => {
   const getPrefix = (el) => ({ deleted: '  - ', added: '  + ' }[el.status] ?? '    ');
   const getProperValue = (value) => {
-    if (!(value instanceof Object)) {
+    if (!(value instanceof Object) || Array.isArray(value)) {
       return value;
     }
-    const newValue = Array.isArray(value)
-      ? value
-      : _.map(value, (innerValue, innerKey) => ({ [innerKey]: innerValue }));
-    return newValue;
+    return _.map(value, (innerValue, innerKey) => ({ [innerKey]: innerValue }));
   };
 
   const iter = (entries, depth = 0) => {
@@ -18,9 +15,8 @@ const stylish = (diff) => {
     const mapped = entries.map((el) => {
       const [[key, value]] = Object.entries(el);
       const prefix = getPrefix(el);
-      const keyPart = `${margin}${prefix}${key}`;
       const properValue = getProperValue(value);
-      return `${keyPart}: ${iter(properValue, depth + 1)}`;
+      return `${margin}${prefix}${key}: ${iter(properValue, depth + 1)}`;
     });
     return `{\n${mapped.join('\n')}\n${margin}}`;
   };
