@@ -8,28 +8,6 @@ const __dirname = dirname(__filename);
 
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 
-test('non-empty json', () => {
-  const expected = {
-    host: 'hexlet.io',
-    timeout: 50,
-    proxy: '123.234.53.22',
-    follow: false,
-  };
-  expect(parse(getFixturePath('not-empty1.json')))
-    .toEqual(expected);
-});
-
-test('non-empty yaml', () => {
-  const expected = {
-    host: 'hexlet.io',
-    timeout: 50,
-    proxy: '123.234.53.22',
-    follow: false,
-  };
-  expect(parse(getFixturePath('not-empty1.yml')))
-    .toEqual(expected);
-});
-
 test('nested json1', () => {
   const expected = {
     common: {

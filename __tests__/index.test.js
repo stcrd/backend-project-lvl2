@@ -9,32 +9,6 @@ const __dirname = dirname(__filename);
 
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 
-test('two flat non-empty jsons', () => {
-  const expected = `{
-  - follow: false
-    host: hexlet.io
-  - proxy: 123.234.53.22
-  - timeout: 50
-  + timeout: 20
-  + verbose: true
-}`;
-  const rawDiff = genDiff(getFixturePath('not-empty1.json'), getFixturePath('not-empty2.json'));
-  expect(formatSelector('defaultFormatter')(rawDiff))
-    .toEqual(expected);
-});
-
-test('source non-empty json, target empty json', () => {
-  const expected = `{
-  - follow: false
-  - host: hexlet.io
-  - proxy: 123.234.53.22
-  - timeout: 50
-}`;
-  const rawDiff = genDiff(getFixturePath('not-empty1.json'), getFixturePath('empty.json'));
-  expect(formatSelector('defaultFormatter')(rawDiff))
-    .toEqual(expected);
-});
-
 test('stylish format', () => {
   const expected = `{
     common: {
