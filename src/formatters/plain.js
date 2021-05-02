@@ -11,41 +11,46 @@ const getMessage = (property, oldValue, newValue) => {
 };
 const complexWrapper = (value) => (value instanceof Object ? '[complex value]' : value);
 const stringWrapper = (rawValue) => (typeof rawValue === 'string' ? `'${rawValue}'` : rawValue);
-
-const plainFormatter = (diff) => {
-  const iter = (entries, ancestry = '') => {
-    const allKeys = entries.map((el) => {
-      const [key] = Object.keys(el);
-      return key;
+const getUpdatedKeys = (collection) => {
+  const allKeys = collection.map((el) => {
+    const [key] = Object.keys(el);
+    return key;
+  });
+  return _.uniq(allKeys.filter((el) => allKeys.indexOf(el) !== allKeys.lastIndexOf(el)));
+};
+const getRemovedValue = (key, collection) => {
+  const [removedEntry] = collection
+    .filter((element) => {
+      const [removedKey] = Object.keys(element);
+      return (removedKey === key && element.status === 'removed');
     });
-    const updated = _.uniq(allKeys.filter((el) => allKeys.indexOf(el) !== allKeys.lastIndexOf(el)));
+  return stringWrapper(removedEntry[key]);
+};
+
+export default (diff) => {
+  const iter = (entries, ancestry) => {
+    const updatedKeys = getUpdatedKeys(entries);
     const mapped = entries.map((el) => {
       const [key] = Object.keys(el);
       const value = stringWrapper(el[key]);
-      const newAncestry = ancestry === '' ? `${key}` : `${ancestry}.${key}`;
+      const newAncestry = ancestry ? `${ancestry}.${key}` : `${key}`;
 
       if (Array.isArray(value)) {
         return iter(value, newAncestry);
       }
       if (el.status === 'removed') {
-        return updated.includes(key) ? '' : getMessage(newAncestry);
+        return updatedKeys.includes(key) ? '' : getMessage(newAncestry);
       }
       if (el.status === 'added') {
-        if (updated.includes(key)) {
-          const [removedEntry] = entries
-            .filter((element) => {
-              const [removedKey] = Object.keys(element);
-              return (removedKey === key && element.status === 'removed');
-            });
-          const removedValue = stringWrapper(removedEntry[key]);
+        if (updatedKeys.includes(key)) {
+          const removedValue = getRemovedValue(key, entries);
           return getMessage(newAncestry, complexWrapper(removedValue), complexWrapper(value));
         }
         return getMessage(newAncestry, complexWrapper(value));
       }
       return '';
     });
-    return _.compact(mapped).flat().join('\n');
+    return _.compact(mapped).join('\n');
   };
   return iter(diff);
 };
-export default plainFormatter;
