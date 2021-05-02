@@ -1,12 +1,13 @@
 import _ from 'lodash';
 import parse from './parsers.js';
 
+const areBothObjects = (value1, value2) => (value1 instanceof Object && value2 instanceof Object);
 const generateDiff = (data1, data2) => {
   const mapShared = (key, obj1, obj2) => {
     const value1 = obj1[key];
     const value2 = obj2[key];
     if (value1 === value2) return { [key]: value1 };
-    if (value1 instanceof Object && value2 instanceof Object) {
+    if (areBothObjects(value1, value2)) {
       return { [key]: generateDiff(value1, value2) };
     }
     return [{ [key]: value1, status: 'removed' }, { [key]: value2, status: 'added' }];
