@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const getMessage = (property, oldValue, newValue) => {
+const getMsg = (property, oldValue, newValue) => {
   if (oldValue === undefined) {
     return `Property '${property}' was removed`;
   }
@@ -9,7 +9,7 @@ const getMessage = (property, oldValue, newValue) => {
   }
   return `Property '${property}' was updated. From ${oldValue} to ${newValue}`;
 };
-const complexWrapper = (value) => (value instanceof Object ? '[complex value]' : value);
+const complexWrap = (value) => (value instanceof Object ? '[complex value]' : value);
 const stringWrapper = (rawValue) => (typeof rawValue === 'string' ? `'${rawValue}'` : rawValue);
 const getUpdatedKeys = (collection) => {
   const allKeys = collection.map((el) => {
@@ -39,14 +39,12 @@ export default (diff) => {
         return iter(value, newAncestry);
       }
       if (el.status === 'removed') {
-        return updatedKeys.includes(key) ? '' : getMessage(newAncestry);
+        return updatedKeys.includes(key) ? '' : getMsg(newAncestry);
       }
       if (el.status === 'added') {
-        if (updatedKeys.includes(key)) {
-          const removedValue = getRemovedValue(key, entries);
-          return getMessage(newAncestry, complexWrapper(removedValue), complexWrapper(value));
-        }
-        return getMessage(newAncestry, complexWrapper(value));
+        return updatedKeys.includes(key)
+          ? getMsg(newAncestry, complexWrap(getRemovedValue(key, entries)), complexWrap(value))
+          : getMsg(newAncestry, complexWrap(value));
       }
       return '';
     });
