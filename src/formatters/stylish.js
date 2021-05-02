@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const getPrefix = (el) => ({ deleted: '  - ', added: '  + ' }[el.status] ?? '    ');
+const getPrefix = (el) => ({ removed: '  - ', added: '  + ' }[el.status] ?? '    ');
 const getProperValue = (value) => {
   if (!(value instanceof Object) || Array.isArray(value)) {
     return value;

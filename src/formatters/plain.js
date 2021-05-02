@@ -1,11 +1,18 @@
 import _ from 'lodash';
 
-const getRemovedMsg = (property) => (property ? `Property '${property}' was removed` : '');
-const getAddedMsg = (property, value) => `Property '${property}' was added with value: ${value}`;
-const getUpdatedMsg = (property, oldValue, newValue) => `Property '${property}' was updated. From ${oldValue} to ${newValue}`;
-const complexWrapper = (value) => (_.isObject(value) ? '[complex value]' : value);
+const getMessage = (property, oldValue, newValue) => {
+  if (oldValue === undefined) {
+    return property ? `Property '${property}' was removed` : '';
+  }
+  if (newValue === undefined) {
+    return `Property '${property}' was added with value: ${oldValue}`;
+  }
+  return `Property '${property}' was updated. From ${oldValue} to ${newValue}`;
+};
+const complexWrapper = (value) => (value instanceof Object ? '[complex value]' : value);
 
 const plainFormatter = (diff) => {
+  console.log(JSON.stringify(diff, null, ' '));
   const iter = (entries, ancestry = '') => {
     const mapped = entries.reduce((acc, el) => {
       const [key] = Object.keys(el);
@@ -15,22 +22,22 @@ const plainFormatter = (diff) => {
       const iAcc = _.tail(acc);
 
       if (Array.isArray(value)) {
-        return [[], ...iAcc, getRemovedMsg(lastKey), iter(value, newAncestry)];
+        return [[], ...iAcc, getMessage(lastKey), iter(value, newAncestry)];
       }
-      if (el.status === 'deleted') {
-        return [[newAncestry, value], ...iAcc, getRemovedMsg(lastKey)];
+      if (el.status === 'removed') {
+        return [[newAncestry, value], ...iAcc, getMessage(lastKey)];
       }
       if (el.status === 'added') {
         if (!lastKey) {
-          return [[], ...iAcc, getAddedMsg(newAncestry, complexWrapper(value))];
+          return [[], ...iAcc, getMessage(newAncestry, complexWrapper(value))];
         }
         if (lastKey !== newAncestry) {
-          return [[], ...iAcc, getRemovedMsg(lastKey),
-            getAddedMsg(newAncestry, complexWrapper(value)),
+          return [[], ...iAcc, getMessage(lastKey),
+            getMessage(newAncestry, complexWrapper(value)),
           ];
         }
         return [[], ...iAcc,
-          getUpdatedMsg(newAncestry, complexWrapper(lastValue), complexWrapper(value)),
+          getMessage(newAncestry, complexWrapper(lastValue), complexWrapper(value)),
         ];
       }
       return acc;
