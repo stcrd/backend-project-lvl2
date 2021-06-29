@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import { test, expect } from '@jest/globals';
 import genDiff from '../src/generateDifference.js';
 import formatSelector from '../src/formatters/index.js';
+import parse from '../src/parsers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -77,7 +78,8 @@ Property 'group3' was added with value: [complex value]`;
 });
 
 test('json format', () => {
+  const parsedData = parse(getFixturePath('expected.json'));
   const rawDiff = genDiff(getFixturePath('nested1.json'), getFixturePath('nested2.json'));
   expect(formatSelector('json')(rawDiff))
-    .toEqual(rawDiff);
+    .toEqual(parsedData);
 });
