@@ -1,5 +1,5 @@
-const jsonFormatter = (diff) => {
-  const reduced = diff.reduce((acc, el) => {
+const jsonFormatter = (diff) => diff
+  .reduce((acc, el) => {
     const keys = Object.keys(el);
     const [key] = keys;
     const value = el[key];
@@ -10,6 +10,4 @@ const jsonFormatter = (diff) => {
       : { [key]: valueIfStatusExists };
     return { ...acc, ...newEl };
   }, {});
-  return reduced;
-};
 export default jsonFormatter;
