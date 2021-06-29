@@ -12,11 +12,12 @@ $ npm install -g https://github.com/stcrd/backend-project-lvl2.git
 
 ## Run
 ```
-gendiff filepath1 filepath2
+gendiff [options] filepath1 filepath2
 ```
 
-## Sample run
-[Comparing json and yml](https://asciinema.org/a/QMcue8swD9CTvQt5JOKHurAXm)  
-[Stylish formatter](https://asciinema.org/a/uxs7xXyqsrMTdJptvcb3IenHC)  
-[Plain formatter](https://asciinema.org/a/422934)
+## Sample runs
+[Comparing json and yml](https://asciinema.org/a/391066)  
+[Stylish formatter](https://asciinema.org/a/395504)  
+[Plain formatter](https://asciinema.org/a/422934)  
+[JSON formatter](https://asciinema.org/a/422936)
 ##
