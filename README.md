@@ -17,5 +17,6 @@ gendiff filepath1 filepath2
 
 ## Sample run
 [Comparing json and yml](https://asciinema.org/a/QMcue8swD9CTvQt5JOKHurAXm)  
-[After step 6](https://asciinema.org/a/uxs7xXyqsrMTdJptvcb3IenHC)
+[Stylish formatter](https://asciinema.org/a/uxs7xXyqsrMTdJptvcb3IenHC)  
+[Plain formatter](https://asciinema.org/a/422934)
 ##
