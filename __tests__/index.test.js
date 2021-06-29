@@ -78,7 +78,7 @@ Property 'group3' was added with value: [complex value]`;
 });
 
 test('json format', () => {
-  const parsedData = parse(getFixturePath('expected.json'));
+  const parsedData = parse(getFixturePath('expected-json.json'));
   const rawDiff = genDiff(getFixturePath('nested1.json'), getFixturePath('nested2.json'));
   expect(formatSelector('json')(rawDiff))
     .toEqual(parsedData);
