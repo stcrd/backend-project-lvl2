@@ -10,7 +10,7 @@ const getMsg = (property, oldValue, newValue) => {
   return `Property '${property}' was updated. From ${oldValue} to ${newValue}`;
 };
 const complexWrap = (value) => (value instanceof Object ? '[complex value]' : value);
-const stringWrapper = (rawValue) => (typeof rawValue === 'string' ? `'${rawValue}'` : rawValue);
+const stringWrap = (rawValue) => (typeof rawValue === 'string' ? `'${rawValue}'` : rawValue);
 const getUpdatedKeys = (collection) => {
   const allKeys = collection.map((el) => {
     const [key] = Object.keys(el);
@@ -24,7 +24,7 @@ const getRemovedValue = (key, collection) => {
       const [removedKey] = Object.keys(element);
       return (removedKey === key && element.status === 'removed');
     });
-  return stringWrapper(removedEntry[key]);
+  return stringWrap(removedEntry[key]);
 };
 
 export default (diff) => {
@@ -32,7 +32,7 @@ export default (diff) => {
     const updatedKeys = getUpdatedKeys(entries);
     const mapped = entries.map((el) => {
       const [key] = Object.keys(el);
-      const value = stringWrapper(el[key]);
+      const value = stringWrap(el[key]);
       const newAncestry = ancestry ? `${ancestry}.${key}` : `${key}`;
 
       if (Array.isArray(value)) {
