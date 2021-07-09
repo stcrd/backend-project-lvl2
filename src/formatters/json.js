@@ -1,10 +1,13 @@
 const jsonFormatter = (diff) => diff
   .reduce((acc, el) => {
-    const [key, status] = Object.keys(el);
-    const value = el[key];
-    const properValue = Array.isArray(value) ? jsonFormatter(value) : value;
-    const valueIfStatusExists = status ? { [el.status]: properValue } : properValue;
-    const finalValue = acc[key] ? { ...acc[key], ...valueIfStatusExists } : valueIfStatusExists;
-    return { ...acc, ...{ [key]: finalValue } };
+    const { diffKey, diffValue, status } = el;
+    const properValue = Array.isArray(diffValue) ? jsonFormatter(diffValue) : diffValue;
+    const valueIfStatusExists = status === 'same'
+      ? properValue
+      : { [el.status]: properValue };
+    const finalValue = acc[diffKey]
+      ? { ...acc[diffKey], ...valueIfStatusExists }
+      : valueIfStatusExists;
+    return { ...acc, ...{ [diffKey]: finalValue } };
   }, {});
 export default jsonFormatter;

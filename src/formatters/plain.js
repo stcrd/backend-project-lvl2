@@ -12,27 +12,22 @@ const getMsg = (property, oldValue, newValue) => {
 const complexWrap = (value) => (value instanceof Object ? '[complex value]' : value);
 const stringWrap = (rawValue) => (typeof rawValue === 'string' ? `'${rawValue}'` : rawValue);
 const getUpdatedKeys = (collection) => {
-  const allKeys = collection.map((el) => {
-    const [key] = Object.keys(el);
-    return key;
-  });
+  const allKeys = collection.map((el) => el.diffKey);
   return _.uniq(allKeys.filter((el) => allKeys.indexOf(el) !== allKeys.lastIndexOf(el)));
 };
 const getRemovedValue = (key, collection) => {
   const [removedEntry] = collection
-    .filter((element) => {
-      const [removedKey] = Object.keys(element);
-      return (removedKey === key && element.status === 'removed');
-    });
-  return stringWrap(removedEntry[key]);
+    .filter((element) => element.diffKey === key && element.status === 'removed');
+  return stringWrap(removedEntry.diffValue);
 };
 
 export default (diff) => {
   const iter = (entries, ancestry) => {
     const updatedKeys = getUpdatedKeys(entries);
     const mapped = entries.map((el) => {
-      const [key] = Object.keys(el);
-      const value = stringWrap(el[key]);
+      const key = el.diffKey === undefined ? Object.keys(el)[0] : el.diffKey;
+      const rawValue = el.diffValue === undefined ? Object.values(el)[0] : el.diffValue;
+      const value = stringWrap(rawValue);
       const newAncestry = ancestry ? `${ancestry}.${key}` : `${key}`;
 
       if (Array.isArray(value)) {
