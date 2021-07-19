@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { getKey, getValue } from '../getters';
 
 const getMessage = (property, oldValue, newValue) => {
   if (oldValue === undefined) {
@@ -19,23 +20,6 @@ const getRemovedValue = (key, collection) => {
   const [removedEntry] = collection
     .filter((element) => element.diffKey === key && element.status === 'removed');
   return stringWrap(removedEntry.diffValue);
-};
-const getKey = (node) => {
-  if (node.diffKey === undefined) {
-    const [key] = Object.keys(node);
-    return key;
-  }
-  return node.diffKey;
-};
-const getValue = (node) => {
-  if (node.diffValue === undefined) {
-    if (node.children === undefined) {
-      const [value] = Object.values(node);
-      return value;
-    }
-    return node.children;
-  }
-  return node.diffValue;
 };
 
 export default (diff) => {
