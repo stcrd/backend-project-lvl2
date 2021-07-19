@@ -1,10 +1,5 @@
-const getKey = (node) => {
-  if (node.diffKey === undefined) {
-    const [key] = Object.keys(node);
-    return key;
-  }
-  return node.diffKey;
-};
+const getKey = (node) => node.diffKey || Object.keys(node)[0];
+
 const getValue = (node) => {
   if (node.diffValue === undefined) {
     if (node.children === undefined) {
