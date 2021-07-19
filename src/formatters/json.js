@@ -1,15 +1,17 @@
-const jsonFormatter = (diff) => diff
-  .reduce((acc, el) => {
+const jsonFormatter = (diff) => {
+  const getValue = (diffValue, children, status) => {
+    const properValue = children ? jsonFormatter(children) : diffValue;
+    return status === 'same' ? properValue : { [status]: properValue };
+  };
+  return diff.reduce((acc, el) => {
     const {
       diffKey, diffValue, children, status,
     } = el;
-    const properValue = children ? jsonFormatter(children) : diffValue;
-    const valueIfStatusExists = status === 'same'
-      ? properValue
-      : { [el.status]: properValue };
+    const tempValue = getValue(diffValue, children, status);
     const finalValue = acc[diffKey]
-      ? { ...acc[diffKey], ...valueIfStatusExists }
-      : valueIfStatusExists;
+      ? { ...acc[diffKey], ...tempValue }
+      : tempValue;
     return { ...acc, ...{ [diffKey]: finalValue } };
   }, {});
+};
 export default jsonFormatter;
