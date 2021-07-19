@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const getMsg = (property, oldValue, newValue) => {
+const getMessage = (property, oldValue, newValue) => {
   if (oldValue === undefined) {
     return `Property '${property}' was removed`;
   }
@@ -20,13 +20,30 @@ const getRemovedValue = (key, collection) => {
     .filter((element) => element.diffKey === key && element.status === 'removed');
   return stringWrap(removedEntry.diffValue);
 };
+const getKey = (node) => {
+  if (node.diffKey === undefined) {
+    const [key] = Object.keys(node);
+    return key;
+  }
+  return node.diffKey;
+};
+const getValue = (node) => {
+  if (node.diffValue === undefined) {
+    if (node.children === undefined) {
+      const [value] = Object.values(node);
+      return value;
+    }
+    return node.children;
+  }
+  return node.diffValue;
+};
 
 export default (diff) => {
   const iter = (entries, ancestry) => {
     const updatedKeys = getUpdatedKeys(entries);
     const mapped = entries.map((el) => {
-      const key = el.diffKey === undefined ? Object.keys(el)[0] : el.diffKey;
-      const rawValue = el.diffValue === undefined ? Object.values(el)[0] : el.diffValue;
+      const key = getKey(el);
+      const rawValue = getValue(el);
       const value = stringWrap(rawValue);
       const newAncestry = ancestry ? `${ancestry}.${key}` : `${key}`;
 
@@ -34,12 +51,12 @@ export default (diff) => {
         return iter(value, newAncestry);
       }
       if (el.status === 'removed') {
-        return updatedKeys.includes(key) ? '' : getMsg(newAncestry);
+        return updatedKeys.includes(key) ? '' : getMessage(newAncestry);
       }
       if (el.status === 'added') {
         return updatedKeys.includes(key)
-          ? getMsg(newAncestry, complexWrap(getRemovedValue(key, entries)), complexWrap(value))
-          : getMsg(newAncestry, complexWrap(value));
+          ? getMessage(newAncestry, complexWrap(getRemovedValue(key, entries)), complexWrap(value))
+          : getMessage(newAncestry, complexWrap(value));
       }
       return '';
     });

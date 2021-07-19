@@ -8,7 +8,7 @@ const { program } = commander;
 program
   .version('0.0.1')
   .description('Compares two configuration files and shows the difference.')
-  .option('-f, --format [type]', 'output format: stylish, plain, json', 'stylish')
+  .option('-f, --format [stylish, plain, json]', 'stylish')
   .arguments('<filepath1> <filepath2>')
   .action((filepath1, filepath2) => {
     const diff = genDiff(filepath1, filepath2);

@@ -1,7 +1,9 @@
 const jsonFormatter = (diff) => diff
   .reduce((acc, el) => {
-    const { diffKey, diffValue, status } = el;
-    const properValue = Array.isArray(diffValue) ? jsonFormatter(diffValue) : diffValue;
+    const {
+      diffKey, diffValue, children, status,
+    } = el;
+    const properValue = children ? jsonFormatter(children) : diffValue;
     const valueIfStatusExists = status === 'same'
       ? properValue
       : { [el.status]: properValue };
